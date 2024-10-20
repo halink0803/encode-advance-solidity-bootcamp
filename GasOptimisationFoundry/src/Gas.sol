@@ -13,13 +13,13 @@ error TierTooBig();
 error AmountTooSmall();
 
 contract GasContract is Ownable {
+    mapping(address => uint256) public whitelist;
+    mapping(address => uint256) public balances;
+    address[5] public administrators;
     uint256 private totalSupply; // cannot be updated
     uint256 private paymentCounter;
     address private contractOwner;
     mapping(address => Payment[]) private payments;
-    mapping(address => uint256) public whitelist;
-    mapping(address => uint256) public balances;
-    address[5] public administrators;
     enum PaymentType {
         BasicPayment,
         Refund,
@@ -88,10 +88,9 @@ contract GasContract is Ownable {
         contractOwner = msg.sender;
         totalSupply = _totalSupply;
 
-        for (uint256 i = 0; i < administrators.length; i++) {
+        for (uint256 i; i < administrators.length; i++) {
             if (_admins[i] != address(0)) {
                 administrators[i] = _admins[i];
-                balances[_admins[i]] = 0;
                 if (_admins[i] == contractOwner) {
                     balances[contractOwner] = totalSupply;
                 }
@@ -110,7 +109,7 @@ contract GasContract is Ownable {
 
     function checkForAdmin(address _user) public view returns (bool admin_) {
         bool admin = false;
-        for (uint256 i = 0; i < administrators.length; i++) {
+        for (uint256 i; i < administrators.length; i++) {
             if (administrators[i] == _user) {
                 admin = true;
             }
@@ -122,13 +121,13 @@ contract GasContract is Ownable {
         return balances[_user];
     }
 
-    function addHistory(address _updateAddress, bool _tradeMode)
+    function addHistory(address _updateAddress) 
         internal 
         returns (bool status_, bool tradeMode_)
     {
         History memory history = History(block.timestamp, _updateAddress, block.number);
         paymentHistory.push(history);
-        return (true, _tradeMode);
+        return (true, true);
     }
 
     function getPayments(address _user)
@@ -184,13 +183,13 @@ contract GasContract is Ownable {
 
         address sender = msg.sender;
 
-        for (uint256 i = 0; i < payments[_user].length; i++) {
+        for (uint256 i; i < payments[_user].length; i++) {
             if (payments[_user][i].paymentID == _ID) {
                 payments[_user][i].adminUpdated = true;
                 payments[_user][i].admin = _user;
                 payments[_user][i].paymentType = _type;
                 payments[_user][i].amount = _amount;
-                addHistory(_user, true);
+                addHistory(_user);
                 emit PaymentUpdated(
                     sender,
                     _ID,
