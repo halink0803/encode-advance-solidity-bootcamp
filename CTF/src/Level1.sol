@@ -17,8 +17,8 @@ contract Level1 {
         uint256[2][3] calldata x, 
         uint256[2][3] calldata y
         ) external pure returns (uint256[2][3] memory finalRes){ 
-        for (uint256 i; i < 2; i++) {
-            for (uint256 j; j < 3; j++) {
+        for (uint256 i; i < 3; i++) {
+            for (uint256 j; j < 2; j++) {
                 finalRes[i][j] = x[i][j] + y[i][j];
             }
         }

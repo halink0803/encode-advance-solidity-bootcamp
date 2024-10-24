@@ -2,6 +2,7 @@
 pragma solidity 0.8.17;
 
 import {Test} from "forge-std/Test.sol";
+import {Level1} from "../src/Level1.sol";
 
 /////////////////// ☆☆ extropyio ☆☆ /////////////////////
 //     -漫~*'¨¯¨'*·舞~ solidity ctf ~舞·*'¨¯¨'*~漫-     //
@@ -13,16 +14,10 @@ import {Test} from "forge-std/Test.sol";
     }
 */
 
-contract Level1 {
+contract Level1Test is Test {
+    Level1 public level1;
 
-	function solution(
-        uint256[2][3] calldata x, 
-        uint256[2][3] calldata y
-        ) external pure returns (uint256[2][3] memory finalRes){ 
-        for (uint256 i; i < 2; i++) {
-            for (uint256 j; j < 3; j++) {
-                finalRes[i][j] = x[i][j] + y[i][j];
-            }
-        }
+	function testMatrixAdd() public { 
+        level1 = new Level1();
     }
 }
