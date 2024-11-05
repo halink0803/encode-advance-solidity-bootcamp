@@ -14,17 +14,14 @@ interface Isolution3 {
 
 contract Level3 {
     function solution(bytes memory packed) external pure returns (uint16 a, bool b, bytes6 c) {
-        // require(packed.length == 9, "Invalid data length");
+        assembly {    
+            a := mload(add(packed, 2)) 
+            b := mload(add(packed, 3)) 
+        }
 
-        // Unpack `a` (uint16, 2 bytes)
-        a = uint16(uint8(packed[0])) << 8 | uint16(uint8(packed[1]));
-
-        // Unpack `b` (bool, 1 byte)
-        b = (packed[2] != 0);
-
-        // Unpack `c` (bytes6, 6 bytes)
-        c = bytes6(
-            (bytes1(packed[3]) | (bytes1(packed[4]) >> 8) | (bytes1(packed[5]) >> 16) | (bytes1(packed[6]) >> 24) | (bytes1(packed[7]) >> 32) | (bytes1(packed[8]) >> 40))
-        );
+        // Copy the remaining bytes for `c`
+        for (uint i = 0; i < packed.length - 3; i++) {
+            c |= bytes6(packed[3 + i] & 0xFF) >> (i * 8);
+        } 
     }
 }
